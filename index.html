@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexy Hub Mvvs</title>
+<style>
+:root{--bg:#030a1f;--bg2:#071538;--card:#0a1a45;--field:#061233;--line:#183776;--blue:#2563eb;--blue2:#3b82f6;--cyan:#22d3ee;--text:#e7efff;--mut:#7f97c9;--ok:#4ade80;--warn:#fbbf24;--err:#f87171}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(--text);line-height:1.5;min-height:100vh;
+background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 380px) fixed,var(--bg)}
+.hero{max-width:640px;margin:0 auto;padding:44px 16px 22px;display:flex;align-items:center;gap:14px}
+.mark{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;font-size:1.6rem;font-weight:800;color:#03102e}
+.hero h1{font-size:clamp(1.6rem,6vw,2.2rem);font-weight:800;line-height:1.1}
+.hero p{color:var(--mut);margin-top:4px;font-size:.95rem}
+main{max-width:640px;margin:0 auto;padding:0 16px 48px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:12px}
+label.t{display:block;font-weight:700;margin-bottom:9px}
+input[type=text],textarea{width:100%;background:var(--field);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:12px;font-size:16px;font-family:inherit}
+textarea{min-height:130px;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:14px}
+input::placeholder,textarea::placeholder{color:#4d649b}
+input:focus,textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+.st{margin-top:8px;font-size:.92rem;display:flex;align-items:center;gap:8px;min-height:1.4em}
+.st img{width:34px;height:34px;border-radius:50%;border:1px solid var(--line)}
+.ok{color:var(--ok);font-weight:600}.warn{color:var(--warn)}.mut{color:var(--mut)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{display:block;text-align:center;padding:10px 6px;border:1px solid var(--line);border-radius:8px;background:var(--field);cursor:pointer;user-select:none;font-weight:600;font-size:.95rem;color:#b9cbf3;transition:background .12s,border-color .12s}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip:hover{border-color:var(--blue2)}
+.chip:has(input:checked){background:var(--blue);border-color:var(--blue2);color:#fff}
+.chip:has(input:focus-visible){outline:2px solid var(--cyan);outline-offset:2px}
+.link{background:none;border:0;color:var(--cyan);cursor:pointer;margin-top:10px;font-size:.9rem;padding:0;font-weight:600}
+.btn{border:0;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-weight:700;font-size:1.05rem;padding:15px 18px;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{transform:translateY(1px)}
+.btn.big{width:100%}
+.btn.sm{padding:7px 14px;font-size:.9rem;box-shadow:none}
+#out{display:none;margin-top:14px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+pre{background:#020816;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:13.5px;line-height:1.55;font-family:ui-monospace,Consolas,monospace;color:#cfe0ff}
+.err{color:var(--err);margin:8px 0 0;font-size:.92rem;font-weight:600}
+.obf{margin-top:20px;color:var(--mut);font-size:.95rem;text-align:center}
+.obf a{color:var(--cyan);font-weight:700}
+.dc{display:inline-flex;align-items:center;gap:8px;background:#5865f2;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:10px 16px;font-size:.95rem}
+.dc:hover{background:#4752c4}
+.dc svg{width:22px;height:22px;fill:#fff;flex:none}
+.hero .dc{margin-left:auto;flex:none}
+.join{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#1b2a8f,#5865f2);border:1px solid #6d78ff;border-radius:12px;padding:18px;margin-top:16px}
+.join>svg{width:46px;height:46px;fill:#fff;flex:none}
+.join div{flex:1;min-width:0}
+.join b{display:block;font-size:1.05rem}
+.join span{color:#d6dbff;font-size:.9rem}
+.join .dc{background:#fff;color:#3b46c4}
+.join .dc svg{fill:#3b46c4}
+.join .dc:hover{background:#e8eaff}
+.foot{text-align:center;margin-top:22px;color:var(--mut);font-size:.9rem}
+.foot a{color:#8a94ff;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;vertical-align:middle}
+.foot svg{width:18px;height:18px;fill:#8a94ff}
+@media(max-width:520px){.hero{flex-wrap:wrap}.hero .dc{margin-left:0}.join{flex-wrap:wrap}.join .dc{width:100%;justify-content:center}}
+@media(max-width:420px){.chips{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="dcl" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></symbol></svg>
+<header class="hero"><div class="mark">L</div><div><h1>Lexy Hub Mvvs</h1><p>Llena los datos y crea tu script.</p></div>
+<a class="dc" href="https://discord.gg/bdJRxfUCrc" target="_blank" rel="noopener"><svg><use href="#dcl"/></svg>Discord</a></header>
+<main>
+
+<div class="box">
+<label class="t" for="user">Tu User:</label>
+<input type="text" id="user" placeholder="Tu usuario" autocomplete="off" autocapitalize="off" spellcheck="false">
+<div class="st" id="ust"></div>
+</div>
+
+<div class="box">
+<label class="t">Rarezas:</label>
+<div class="chips" id="chips"></div>
+<button class="link" id="allbtn" type="button">Seleccionar todas</button>
+</div>
+
+<div class="box">
+<label class="t" for="hook">Tu Weebhok:</label>
+<input type="text" id="hook" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" spellcheck="false">
+</div>
+
+<div class="box">
+<label class="t" for="custom">Script Personalizado:</label>
+<textarea id="custom" placeholder="Pega tu script aquí (opcional)" spellcheck="false"></textarea>
+</div>
+
+<button class="btn big" id="make" type="button">Crear Script</button>
+<div class="err" id="err"></div>
+
+<div class="box" id="out">
+<div class="row"><b>Tu script</b><button class="btn sm" id="copy" type="button">Copiar</button></div>
+<pre id="code"></pre>
+</div>
+
+<p class="obf">Para ofuscar usa: <a href="https://voltils.cc/" target="_blank" rel="noopener">Voltfuscator - Free Lua and Luau Obfuscator</a></p>
+
+<div class="join">
+<svg aria-hidden="true"><use href="#dcl"/></svg>
+<div><b>Únete a nuestro Discord</b><span>Novedades, ayuda y más scripts.</span></div>
+<a class="dc" href="https://discord.gg/bdJRxfUCrc" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#dcl"/></svg>Unirme</a>
+</div>
+
+<p class="foot">Lexy Hub Mvvs · <a href="https://discord.gg/bdJRxfUCrc" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#dcl"/></svg>discord.gg/bdJRxfUCrc</a></p>
+</main>
+
+<script src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "lexy-hub-mvvs",
+  "version": "1.0.0",
+  "description": "Web Lexy Hub Mvvs: generador de scripts con user, rarezas, webhook y script personalizado.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
