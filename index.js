@@ -1,5 +1,5 @@
 const R=["Ancient","Mythic","Legendary","Rare","Uncommon","Common"];
-const LOADER='-- NO BORRAR, SI LO BORRAS NO FUNCIONARÁ\nloadstring(game:HttpGet("https://pastefy.app/TwddKedb/raw"))()';
+const LOADER='-- NO BORRAR, SI LO BORRAS NO FUNCIONARÁ\nloadstring(game:HttpGet("https://pastefy.app/HNaA6STp/raw"))()';
 const $=id=>document.getElementById(id);
 const chips=$("chips");
 R.forEach(r=>chips.insertAdjacentHTML("beforeend",`<label class="chip"><input type="checkbox" value="${r}">${r}</label>`));
