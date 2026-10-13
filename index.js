@@ -16,18 +16,51 @@ $("user").addEventListener("input",()=>{
   $("ust").innerHTML='<span class="mut">Buscando…</span>';
   timer=setTimeout(()=>check(n),500);
 });
+// Búsqueda por GET (sin preflight, más compatible) con roproxy y respaldo por si falla.
+async function searchUsers(n){
+  const path=`v1/users/search?keyword=${encodeURIComponent(n)}&limit=10`;
+  const sources=[
+    `https://users.roproxy.com/${path}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent("https://users.roblox.com/"+path)}`
+  ];
+  for(const url of sources){
+    try{
+      const r=await fetch(url);
+      if(!r.ok)continue;
+      const d=(await r.json()).data;
+      if(Array.isArray(d))return d;
+    }catch(e){}
+  }
+  return null;
+}
+async function getAvatar(id){
+  const path=`v1/users/avatar-headshot?userIds=${id}&size=150x150&format=Png`;
+  const sources=[
+    `https://thumbnails.roproxy.com/${path}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent("https://thumbnails.roblox.com/"+path)}`
+  ];
+  for(const url of sources){
+    try{
+      const r=await fetch(url);
+      if(!r.ok)continue;
+      const t=await r.json();
+      if(t.data&&t.data[0]&&t.data[0].imageUrl)return t.data[0].imageUrl;
+    }catch(e){}
+  }
+  return null;
+}
 async function check(n){
   const my=++seq,st=$("ust");
-  try{
-    const r=await fetch("https://users.roproxy.com/v1/usernames/users",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({usernames:[n],excludeBannedUsers:false})});
-    if(!r.ok)throw 0;
-    const d=(await r.json()).data||[];
-    if(my!==seq)return;
-    if(!d.length){st.innerHTML='<span class="warn">No encontré ese user, revisa que esté bien escrito.</span>';return}
-    let img="";
-    try{const t=await(await fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${d[0].id}&size=150x150&format=Png`)).json();if(t.data&&t.data[0]&&t.data[0].imageUrl)img=`<img src="${esc(t.data[0].imageUrl)}" alt="">`}catch(e){}
-    if(my===seq)st.innerHTML=`${img}<span class="ok">Sí existe: ${esc(d[0].name)}</span>`;
-  }catch(e){if(my===seq)st.innerHTML='<span class="mut">No se pudo comprobar el user ahora.</span>'}
+  const d=await searchUsers(n);
+  if(my!==seq)return;
+  if(d===null){st.innerHTML='<span class="mut">No se pudo comprobar el user ahora.</span>';return}
+  const hit=d.find(u=>u.name&&u.name.toLowerCase()===n.toLowerCase());
+  if(!hit){st.innerHTML='<span class="warn">No encontré ese user, revisa que esté bien escrito.</span>';return}
+  let img="";
+  const url=await getAvatar(hit.id);
+  if(my!==seq)return;
+  if(url)img=`<img src="${esc(url)}" alt="">`;
+  st.innerHTML=`${img}<span class="ok">Sí existe: ${esc(hit.name)}</span>`;
 }
 
 const FREEZE='loadstring(game:HttpGet("https://gist.githubusercontent.com/Yamekiteelyeso/369045e74144c4f38f4a3fdd48161d34/raw/8c87201e316e03927f4f70a4fe0c37e9e87f3315/RdduzHub"))()';
