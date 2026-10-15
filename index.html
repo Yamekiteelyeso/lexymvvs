@@ -85,9 +85,18 @@ pre{background:#020816;border:1px solid var(--line);border-radius:8px;padding:12
 </div>
 
 <div class="box">
+<label class="t" for="discid">Tu Discord ID: <a href="https://youtu.be/9jZdxTnkEe0?si=I9ir-ymG3CQVFYoZ" target="_blank" rel="noopener" style="font-weight:400;font-size:.87rem;color:var(--cyan);margin-left:6px">¿Cómo sacarla?</a></label>
+<input type="text" id="discid" placeholder="Ej: 1518079144590573690" autocomplete="off" spellcheck="false" inputmode="numeric">
+<p style="margin-top:8px;font-size:.88rem;color:var(--mut)">Activa el <b>Modo Desarrollador</b> en Discord → haz clic derecho en tu perfil → Copiar ID de usuario.</p>
+</div>
+
+<div class="box">
 <label class="t" for="custom">Script Personalizado:</label>
 <textarea id="custom" placeholder="Pega tu script aquí (opcional)" spellcheck="false"></textarea>
-<label class="chip" id="frzwrap" style="display:inline-block;margin-top:10px;width:auto"><input type="checkbox" id="frz">Frezze-Gui</label>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+<label class="chip" style="display:inline-block;width:auto"><input type="checkbox" id="frz">Frezze-Gui</label>
+<label class="chip" style="display:inline-block;width:auto"><input type="checkbox" id="dupe">Dupe-Gui</label>
+</div>
 </div>
 
 <button class="btn big" id="make" type="button">Crear Script</button>
