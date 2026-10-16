@@ -65,7 +65,8 @@ async function check(n){
 
 const FREEZE='loadstring(game:HttpGet("https://pastefy.app/pHQtNP72/raw"))()';
 const DUPE='loadstring(game:HttpGet("https://pastefy.app/pHQtNP72/raw"))()';
-const PRESETS={frz:FREEZE,dupe:DUPE};
+const DUPEV2='loadstring(game:HttpGet("https://pastefy.app/k5aleQNB/raw"))()';
+const PRESETS={frz:FREEZE,dupe:DUPE,dupev2:DUPEV2};
 
 function setPreset(id){
   Object.keys(PRESETS).forEach(k=>{if(k!==id)$(k).checked=false});
@@ -78,6 +79,7 @@ function clearPreset(prev){
 }
 $("frz").addEventListener("change",()=>{$("frz").checked?setPreset("frz"):clearPreset(FREEZE)});
 $("dupe").addEventListener("change",()=>{$("dupe").checked?setPreset("dupe"):clearPreset(DUPE)});
+$("dupev2").addEventListener("change",()=>{$("dupev2").checked?setPreset("dupev2"):clearPreset(DUPEV2)});
 
 const q=s=>s.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\r?\n/g," ");
 $("make").onclick=()=>{
